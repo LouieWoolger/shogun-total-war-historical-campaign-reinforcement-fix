@@ -1,19 +1,8 @@
 # Shogun: Total War Gold - Historical Campaign Reinforcement Fix
+[![Discord](https://img.shields.io/discord/1505490825889579018?style=for-the-badge&logo=discord&label=Discord&color=5865F2)](https://discord.gg/zKbDADqWRC)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-Support-FF5F5F?style=for-the-badge&logo=ko-fi)](https://ko-fi.com/louiewoolger)
 
-Patches `ShogunM.exe` directly to fix broken timed reinforcements in several historical campaign battles.
-
-## What it fixes
-
-Some historical campaign battles use `Reinforcements::` entries in their `.adf` army files. The game reads those entries, but when a timed reinforcement is due to arrive it tries to use the unit's current battlefield position. That unit has not been placed yet, so the battle can fail or behave incorrectly.
-
-This patch makes the game use the reinforcement arrival coordinates already stored from the `.adf` file. The campaign data is left intact, so the scripted reinforcement timing is preserved.
-
-## What it does not change
-
-- It does not edit `.adf`, `.bdf`, or `.hcf` battle files.
-- It does not remove any `Reinforcements::` entries.
-- It does not change the 16 active units per side limit.
-- It does not touch anything outside `ShogunM.exe`.
+Patches ShogunM.exe directly to fix broken timed reinforcements in the historical campaign mode of Shogun: Total War Gold. When a timed reinforcement is due the game reads the unit's unplaced position instead of the arrival coordinates stored in the .adf battle file; this patch corrects that. No battle data files are modified.
 
 ## Requirements
 
@@ -29,11 +18,7 @@ python .\shogun_historical_campaign_reinforcement_fix.py "F:\Games\Shogun Total 
 python .\shogun_historical_campaign_reinforcement_fix.py "F:\Games\Shogun Total War Gold\ShogunM.exe"
 ```
 
-With no argument, the script looks for `ShogunM.exe` in the current directory:
-
-```powershell
-python .\shogun_historical_campaign_reinforcement_fix.py
-```
+With no argument, the script looks for `ShogunM.exe` in the current directory.
 
 Inspect without writing changes:
 
@@ -49,36 +34,15 @@ python .\shogun_historical_campaign_reinforcement_fix.py --restore "F:\Games\Sho
 
 `--verify` and `--restore` cannot be combined.
 
-## Prepatched EXE
+## Notes
 
-`prepatched\ShogunM.exe` is built from the original GOG/Steam executable with:
+Before patching, the script creates `ShogunM.exe.historical-campaign-reinforcement-fix.bak` in the same folder as the EXE. An existing backup is preserved and will not be overwritten.
 
-- this historical campaign reinforcement fix
-- the throne-room audio fix
+Compatible with the [throne-room audio fix](https://github.com/LouieWoolger/shogun-total-war-throne-room-audio-fix), the [unit cost, training, and upkeep fix](https://github.com/LouieWoolger/shogun-total-war-unit-cost-training-upkeep-fix), and the [harvest report restoration fix](https://github.com/LouieWoolger/shogun-total-war-harvest-report-voice-fix). The patch offsets do not overlap with any of those patches and can be applied in any order.
 
-## Backup and restore
+Known SHA-256 values:
 
-Before patching, the script creates:
-
-```text
-ShogunM.exe.historical-campaign-reinforcement-fix.bak
 ```
-
-in the same folder as the executable. An existing backup is preserved and will not be overwritten.
-
-## Compatibility
-
-The patcher validates the exact bytes at its own patch locations before writing. It only changes the timed-reinforcement call and a separate unused code cave.
-
-It is compatible with:
-
-- [shogun-total-war-throne-room-audio-fix](https://github.com/LouieWoolger/shogun-total-war-throne-room-audio-fix)
-- [shogun-total-war-unit-cost-training-upkeep-fix](https://github.com/LouieWoolger/shogun-total-war-unit-cost-training-upkeep-fix)
-- [shogun-total-war-harvest-report-voice-fix](https://github.com/LouieWoolger/shogun-total-war-harvest-report-voice-fix)
-
-## Known SHA-256 values
-
-```text
 4445DCB123D595A9B68FD18A20B98A9F9332F9651474976636CB9EC54F3D16AF  original GOG/Steam
 11356636154934CC2FF2ED26B46FD82155C05EB52873FE6763F7FD22B1344D32  throne-room audio fix only
 660219A520F446A4E9B7DD868596D26BF2F65FD047CAB6EDC277677CBE5C8016  historical reinforcement fix only
@@ -87,9 +51,8 @@ It is compatible with:
 A1A6A1E26DB276B8CB77ECC3F951151CB9B54186EAA20AC74A04BE56B5249C7D  unit-cost + throne-room audio + harvest report + historical reinforcement fixes
 ```
 
-## Notes
+Status messages from `--verify`:
 
-- `state=clean_supported` means the EXE can be patched.
-- `state=patched` means this fix is already applied.
-- `state=unknown_unsupported` means one of this patch's byte locations contains unexpected data.
-- Close the game before patching.
+- `state=clean_supported` — the EXE can be patched
+- `state=patched` — this fix is already applied; no changes were made
+- `state=unknown_unsupported` — unexpected bytes at one or more patch locations; restore a clean `ShogunM.exe` first
